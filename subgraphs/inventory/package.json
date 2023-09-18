@@ -1,0 +1,17 @@
+{
+  "name": "subgraph-inventory",
+  "private": true,
+  "dependencies": {
+    "graphql-yoga": "4.0.4",
+    "@apollo/subgraph": "2.5.4",
+    "graphql": "16.8.0"
+  },
+  "devDependencies": {
+    "typescript": "5.2.2",
+    "@types/node": "20.6.2",
+    "tsup": "7.2.0"
+  },
+  "scripts": {
+    "start": "tsup src/main.ts --watch --onSuccess \"node dist/main.js\""
+  }
+}

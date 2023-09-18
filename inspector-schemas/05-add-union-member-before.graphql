@@ -1,0 +1,13 @@
+type Query {
+  animal(id: ID): Animal
+}
+
+union Animal = Dog | Cat
+
+type Dog {
+  id: ID!
+}
+
+type Cat {
+  id: ID!
+}
