@@ -1,0 +1,4 @@
+type Query {
+  meaningOfLive: String!
+  anotherField: String!
+}

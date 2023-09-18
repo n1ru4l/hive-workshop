@@ -1,0 +1,13 @@
+{
+  "name": "hive-workshop",
+  "private": true,
+  "devDependencies": {
+    "prettier": "2.x.x",
+    "@graphql-hive/cli": "0.29.0",
+    "@graphql-inspector/cli": "4.0.2"
+  },
+  "scripts": {
+    "start:subgraphs": "pnpm run --parallel --filter \"subgraph-*\" start",
+    "start:hive": "docker compose up"
+  }
+}
