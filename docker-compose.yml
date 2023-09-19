@@ -58,7 +58,7 @@ services:
         hard: 40000
         soft: 20000
     volumes:
-      - /Users/laurinquast/Projects/hive-demo/.hive/broker/db:/var/lib/kafka/data:rw
+      - ./.hive-workshop/broker/db:/var/lib/kafka/data:rw
   clickhouse:
     environment:
       CLICKHOUSE_PASSWORD: e3d69e83e92d68f664d1783f33c73265
@@ -78,7 +78,7 @@ services:
     networks:
       stack: null
     volumes:
-      - /Users/laurinquast/Projects/hive-demo/.hive/clickhouse/db:/var/lib/clickhouse:rw
+      - ./.hive-workshop/clickhouse/db:/var/lib/clickhouse:rw
   db:
     environment:
       PGDATA: /var/lib/postgresql/data
@@ -96,7 +96,7 @@ services:
     networks:
       stack: null
     volumes:
-      - /Users/laurinquast/Projects/hive-demo/.hive/postgres:/var/lib/postgresql/data:rw
+      - ./.hive-workshop/postgres:/var/lib/postgresql/data:rw
   emails:
     depends_on:
       redis:
@@ -162,7 +162,7 @@ services:
     networks:
       stack: null
     volumes:
-      - /Users/laurinquast/Projects/hive-demo/.hive/redis/db:/bitnami/redis/data:rw
+      - ./.hive-workshop/redis/db:/bitnami/redis/data:rw
   s3:
     command: server /data --console-address ":9001"
     environment:
@@ -388,5 +388,5 @@ services:
         hard: 40000
         soft: 20000
     volumes:
-      - /Users/laurinquast/Projects/hive-demo/.hive/zookeeper/db:/var/lib/zookeeper/data:rw
+      - ./.hive-workshop/zookeeper/db:/var/lib/zookeeper/data:rw
 version: "3.8"
