@@ -7,7 +7,6 @@
     "@graphql-inspector/cli": "4.0.2"
   },
   "scripts": {
-    "start:subgraphs": "pnpm run --parallel --filter \"subgraph-*\" start",
-    "start:hive": "docker compose up"
+    "start:subgraphs": "pnpm run --parallel --filter \"subgraph-*\" start"
   }
 }

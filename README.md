@@ -8,7 +8,6 @@ The video for the workshop will be added later on as it is available on YouTube.
 
 ## Prerequisites
 
-- Install Docker on your machine
 - Install Node.js on your machine
 - Install pnpm on your machine
 
@@ -18,47 +17,6 @@ The video for the workshop will be added later on as it is available on YouTube.
 pnpm install
 ```
 
-## Diff Schemas with GraphQL Inspector
-
-### Add new Field
-
-```bash
-pnpm graphql-inspector diff \
-  inspector-schemas/add-new-field-before.graphql \
-  inspector-schemas/add-new-field-after.graphql
-```
-
-### Make Field Type Nullable
-
-```bash
-pnpm graphql-inspector diff \
-  inspector-schemas/make-field-type-nullable-before.graphql \
-  inspector-schemas/make-field-type-nullable-after.graphql
-```
-
-### Make Field Non-Type Nullable
-
-```bash
-pnpm graphql-inspector diff \
-  inspector-schemas/make-field-type-non-nullable-before.graphql \
-  inspector-schemas/make-field-type-non-nullable-after.graphql
-```
-
-### Change Field Type
-
-```bash
-pnpm graphql-inspector diff \
-  inspector-schemas/cha
-nge-field-type-before.graphql \
-  inspector-schemas/change-field-type-after.graphql
-```
-
-## Starting Hive
-
-```bash
-pnpm run start:hive
-```
-
 ## Start Subgraphs
 
 ```bash
@@ -66,6 +24,8 @@ pnpm run start:subgraphs
 ```
 
 ## Publish Subgraphs
+
+Don't forget to pass in the `--registry.accessToken` flag
 
 ### Echo
 
