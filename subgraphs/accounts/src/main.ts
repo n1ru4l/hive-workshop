@@ -13,7 +13,7 @@ const typeDefs = parse(/* GraphQL */ `
   type User @key(fields: "id") {
     id: ID!
     name: String
-    username: String
+    username: String!
   }
 `);
 

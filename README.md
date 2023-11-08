@@ -93,18 +93,18 @@ curl -fsSL https://graphql-hive.com/apollo-router-download.sh | bash
 ## Run Apollo Router
 
 ```bash
-HIVE_CDN_ENDPOINT="http://localhost:8082/artifacts/v1/653d03a9-16c0-407d-ad26-78f5c10c76d8" \
-  HIVE_CDN_KEY="hv2ODFlNDk0YzctMmQ1ZC00YzZkLWJhMmEtODYzYmI1MGYzODYyOjJkNzViZTk2MjVjMjUzOWQzMTZhZDc2NGU5Y2I3MDBhZGNlYjUwMWE=" \
+HIVE_CDN_ENDPOINT="" \
+  HIVE_CDN_KEY=""s \
   ./router --dev
 ```
 
 ## Run Apollo Router with Usage Reporting
 
 ```bash
-HIVE_TOKEN="99c12887d40e9ad41aaa0e46677b064b" \
-  HIVE_ENDPOINT="http://localhost:8081" \
-  HIVE_CDN_ENDPOINT="http://localhost:8082/artifacts/v1/653d03a9-16c0-407d-ad26-78f5c10c76d8" \
-  HIVE_CDN_KEY="hv2ODFlNDk0YzctMmQ1ZC00YzZkLWJhMmEtODYzYmI1MGYzODYyOjJkNzViZTk2MjVjMjUzOWQzMTZhZDc2NGU5Y2I3MDBhZGNlYjUwMWE=" \
+HIVE_TOKEN="" \
+  HIVE_ENDPOINT="" \
+  HIVE_CDN_ENDPOINT="" \
+  HIVE_CDN_KEY="==" \
   ./router --dev --config supergraph.yaml
 ```
 
