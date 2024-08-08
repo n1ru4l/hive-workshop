@@ -1,5 +1,5 @@
-version: '3.8'
-name: 'hive'
+version: "3.8"
+name: "hive"
 
 networks:
   stack:
@@ -9,33 +9,33 @@ services:
   db:
     image: postgres:14.12-alpine
     environment:
-      POSTGRES_DB: '${POSTGRES_DB}'
-      POSTGRES_USER: '${POSTGRES_USER}'
-      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       PGDATA: /var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}']
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 6
     networks:
-      - 'stack'
+      - "stack"
     volumes:
       - ./.hive/postgres:/var/lib/postgresql/data
 
   clickhouse:
     image: clickhouse/clickhouse-server:24.6-alpine
     healthcheck:
-      test: ['CMD', 'wget', '--spider', '-q', 'http://0.0.0.0:8123/ping']
+      test: ["CMD", "wget", "--spider", "-q", "http://0.0.0.0:8123/ping"]
       interval: 5s
       timeout: 5s
       retries: 6
       start_period: 10s
     environment:
-      CLICKHOUSE_USER: '${CLICKHOUSE_USER}'
-      CLICKHOUSE_PASSWORD: '${CLICKHOUSE_PASSWORD}'
+      CLICKHOUSE_USER: "${CLICKHOUSE_USER}"
+      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
     networks:
-      - 'stack'
+      - "stack"
     volumes:
       - ./.hive/clickhouse/db:/var/lib/clickhouse
 
@@ -44,15 +44,15 @@ services:
     container_name: broker
     hostname: broker
     networks:
-      - 'stack'
+      - "stack"
     ports:
-      - '0.0.0.0:9092:9092'
-      - '0.0.0.0:9644:9644'
+      - "0.0.0.0:9092:9092"
+      - "0.0.0.0:9644:9644"
     command:
       - redpanda
       - start
       - --smp
-      - '1'
+      - "1"
       - --set redpanda.empty_seed_starts_cluster=false
       - --seeds "redpanda-1:33145"
       - --kafka-addr
@@ -67,7 +67,7 @@ services:
     mem_limit: 300m
     mem_reservation: 100m
     healthcheck:
-      test: 'curl -f http://localhost:9644/public_metrics'
+      test: "curl -f http://localhost:9644/public_metrics"
       interval: 3s
       timeout: 3s
       retries: 6
@@ -78,18 +78,18 @@ services:
   redis:
     image: bitnami/redis:7.2.5
     networks:
-      - 'stack'
+      - "stack"
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 10s
       retries: 6
       start_period: 5s
     environment:
-      REDIS_PASSWORD: '${REDIS_PASSWORD}'
-      REDIS_DISABLE_COMMANDS: 'FLUSHDB,FLUSHALL'
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      REDIS_DISABLE_COMMANDS: "FLUSHDB,FLUSHALL"
     volumes:
-      - './.hive/redis/db:/bitnami/redis/data'
+      - "./.hive/redis/db:/bitnami/redis/data"
 
   supertokens:
     image: registry.supertokens.io/supertokens/supertokens-postgresql:7.0
@@ -97,26 +97,26 @@ services:
       db:
         condition: service_healthy
     networks:
-      - 'stack'
+      - "stack"
     environment:
-      POSTGRESQL_USER: '${POSTGRES_USER}'
-      POSTGRESQL_PASSWORD: '${POSTGRES_PASSWORD}'
-      POSTGRESQL_DATABASE_NAME: '${POSTGRES_DB}'
-      POSTGRESQL_TABLE_NAMES_PREFIX: 'supertokens'
+      POSTGRESQL_USER: "${POSTGRES_USER}"
+      POSTGRESQL_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRESQL_DATABASE_NAME: "${POSTGRES_DB}"
+      POSTGRESQL_TABLE_NAMES_PREFIX: "supertokens"
       POSTGRESQL_HOST: db
       POSTGRESQL_PORT: 5432
-      API_KEYS: '${SUPERTOKENS_API_KEY}'
+      API_KEYS: "${SUPERTOKENS_API_KEY}"
 
   s3:
     image: quay.io/minio/minio:RELEASE.2022-11-29T23-40-49Z
     command: server /data --console-address ":9001"
     ports:
-      - '9000:9000'
-      - '9001:9001'
+      - "9000:9000"
+      - "9001:9001"
     networks:
-      - 'stack'
+      - "stack"
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -124,7 +124,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
-      - './.hive/minio/db:/data'
+      - "./.hive/minio/db:/data"
 
   s3_provision_buckets:
     image: quay.io/minio/mc:RELEASE.2022-11-17T21-20-39Z
@@ -132,7 +132,7 @@ services:
       s3:
         condition: service_healthy
     networks:
-      - 'stack'
+      - "stack"
     entrypoint: >
       /bin/sh -c " /usr/bin/mc alias set myminio http://s3:9000 ${MINIO_ROOT_USER}
       ${MINIO_ROOT_PASSWORD}; /usr/bin/mc ls myminio/artifacts >/dev/null 2>&1 || /usr/bin/mc mb
@@ -144,40 +144,40 @@ services:
       s3:
         condition: service_healthy
     networks:
-      - 'stack'
+      - "stack"
     ports:
-      - '8083:8083'
+      - "8083:8083"
     command: caddy reverse-proxy --from :8083 --to s3:9000 --change-host-header
 
   migrations:
-    image: '${DOCKER_REGISTRY}storage${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}storage${DOCKER_TAG}"
     networks:
-      - 'stack'
+      - "stack"
     depends_on:
       clickhouse:
         condition: service_healthy
       db:
         condition: service_healthy
     environment:
-      MIGRATOR: 'up'
-      CLICKHOUSE_MIGRATOR: 'up'
+      MIGRATOR: "up"
+      CLICKHOUSE_MIGRATOR: "up"
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      POSTGRES_DB: '${POSTGRES_DB}'
-      POSTGRES_USER: '${POSTGRES_USER}'
-      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
-      CLICKHOUSE_PROTOCOL: 'http'
-      CLICKHOUSE_HOST: 'clickhouse'
-      CLICKHOUSE_PORT: '8123'
-      CLICKHOUSE_USERNAME: '${CLICKHOUSE_USER}'
-      CLICKHOUSE_PASSWORD: '${CLICKHOUSE_PASSWORD}'
-      TS_NODE_TRANSPILE_ONLY: 'true'
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      CLICKHOUSE_PROTOCOL: "http"
+      CLICKHOUSE_HOST: "clickhouse"
+      CLICKHOUSE_PORT: "8123"
+      CLICKHOUSE_USERNAME: "${CLICKHOUSE_USER}"
+      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
+      TS_NODE_TRANSPILE_ONLY: "true"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
 
   server:
-    image: '${DOCKER_REGISTRY}server${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}server${DOCKER_TAG}"
     networks:
-      - 'stack'
+      - "stack"
     depends_on:
       redis:
         condition: service_healthy
@@ -198,68 +198,68 @@ services:
       policy:
         condition: service_healthy
     ports:
-      - '8082:3001'
+      - "8082:3001"
     environment:
       NODE_ENV: production
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      POSTGRES_DB: '${POSTGRES_DB}'
-      POSTGRES_USER: '${POSTGRES_USER}'
-      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
-      CLICKHOUSE_PROTOCOL: 'http'
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      CLICKHOUSE_PROTOCOL: "http"
       CLICKHOUSE_HOST: clickhouse
       CLICKHOUSE_PORT: 8123
-      CLICKHOUSE_USERNAME: '${CLICKHOUSE_USER}'
-      CLICKHOUSE_PASSWORD: '${CLICKHOUSE_PASSWORD}'
+      CLICKHOUSE_USERNAME: "${CLICKHOUSE_USER}"
+      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: '${REDIS_PASSWORD}'
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
       TOKENS_ENDPOINT: http://tokens:3003
       WEBHOOKS_ENDPOINT: http://webhooks:3005
       SCHEMA_ENDPOINT: http://schema:3002
       SCHEMA_POLICY_ENDPOINT: http://policy:3012
       EMAILS_ENDPOINT: http://emails:3011
-      ENCRYPTION_SECRET: '${HIVE_ENCRYPTION_SECRET}'
-      WEB_APP_URL: '${HIVE_APP_BASE_URL}'
+      ENCRYPTION_SECRET: "${HIVE_ENCRYPTION_SECRET}"
+      WEB_APP_URL: "${HIVE_APP_BASE_URL}"
       PORT: 3001
-      S3_ENDPOINT: 'http://s3:9000'
+      S3_ENDPOINT: "http://s3:9000"
       S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
       S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
       S3_BUCKET_NAME: artifacts
-      S3_PUBLIC_URL: 'http://localhost:8083'
+      S3_PUBLIC_URL: "http://localhost:8083"
       CDN_AUTH_PRIVATE_KEY: ${CDN_AUTH_PRIVATE_KEY}
-      CDN_API: '1'
-      CDN_API_BASE_URL: 'http://localhost:8082'
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
+      CDN_API: "1"
+      CDN_API_BASE_URL: "http://localhost:8082"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
       # Auth
-      AUTH_ORGANIZATION_OIDC: '1'
-      AUTH_REQUIRE_EMAIL_VERIFICATION: '0'
+      AUTH_ORGANIZATION_OIDC: "1"
+      AUTH_REQUIRE_EMAIL_VERIFICATION: "0"
       SUPERTOKENS_CONNECTION_URI: http://supertokens:3567
-      SUPERTOKENS_API_KEY: '${SUPERTOKENS_API_KEY}'
+      SUPERTOKENS_API_KEY: "${SUPERTOKENS_API_KEY}"
       GRAPHQL_PUBLIC_ORIGIN: http://localhost:8082
       # Tracing
-      OPENTELEMETRY_COLLECTOR_ENDPOINT: '${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}'
-      SENTRY: '${SENTRY:-0}'
-      SENTRY_DSN: '${SENTRY_DSN:-}'
-      PROMETHEUS_METRICS: '${PROMETHEUS_METRICS:-}'
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   policy:
-    image: '${DOCKER_REGISTRY}policy${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}policy${DOCKER_TAG}"
     networks:
-      - 'stack'
+      - "stack"
     environment:
       NODE_ENV: production
       PORT: 3012
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
-      OPENTELEMETRY_COLLECTOR_ENDPOINT: '${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}'
-      SENTRY: '${SENTRY:-0}'
-      SENTRY_DSN: '${SENTRY_DSN:-}'
-      PROMETHEUS_METRICS: '${PROMETHEUS_METRICS:-}'
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   schema:
-    image: '${DOCKER_REGISTRY}schema${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}schema${DOCKER_TAG}"
     networks:
-      - 'stack'
+      - "stack"
     depends_on:
       redis:
         condition: service_healthy
@@ -268,42 +268,42 @@ services:
       PORT: 3002
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: '${REDIS_PASSWORD}'
-      ENCRYPTION_SECRET: '${HIVE_ENCRYPTION_SECRET}'
-      OPENTELEMETRY_COLLECTOR_ENDPOINT: '${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}'
-      SENTRY: '${SENTRY:-0}'
-      SENTRY_DSN: '${SENTRY_DSN:-}'
-      PROMETHEUS_METRICS: '${PROMETHEUS_METRICS:-}'
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      ENCRYPTION_SECRET: "${HIVE_ENCRYPTION_SECRET}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
 
   tokens:
-    image: '${DOCKER_REGISTRY}tokens${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}tokens${DOCKER_TAG}"
     networks:
-      - 'stack'
+      - "stack"
     depends_on:
       migrations:
         condition: service_completed_successfully
     environment:
       NODE_ENV: production
       POSTGRES_HOST: db
-      POSTGRES_USER: '${POSTGRES_USER}'
-      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_PORT: 5432
-      POSTGRES_DB: '${POSTGRES_DB}'
+      POSTGRES_DB: "${POSTGRES_DB}"
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: '${REDIS_PASSWORD}'
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
       PORT: 3003
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
-      OPENTELEMETRY_COLLECTOR_ENDPOINT: '${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}'
-      SENTRY: '${SENTRY:-0}'
-      SENTRY_DSN: '${SENTRY_DSN:-}'
-      PROMETHEUS_METRICS: '${PROMETHEUS_METRICS:-}'
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   webhooks:
-    image: '${DOCKER_REGISTRY}webhooks${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}webhooks${DOCKER_TAG}"
     networks:
-      - 'stack'
+      - "stack"
     depends_on:
       redis:
         condition: service_healthy
@@ -312,17 +312,17 @@ services:
       PORT: 3005
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: '${REDIS_PASSWORD}'
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
-      OPENTELEMETRY_COLLECTOR_ENDPOINT: '${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}'
-      SENTRY: '${SENTRY:-0}'
-      SENTRY_DSN: '${SENTRY_DSN:-}'
-      PROMETHEUS_METRICS: '${PROMETHEUS_METRICS:-}'
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   emails:
-    image: '${DOCKER_REGISTRY}emails${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}emails${DOCKER_TAG}"
     networks:
-      - 'stack'
+      - "stack"
     depends_on:
       redis:
         condition: service_healthy
@@ -331,19 +331,19 @@ services:
       PORT: 3011
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: '${REDIS_PASSWORD}'
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
       EMAIL_FROM: no-reply@graphql-hive.com
       EMAIL_PROVIDER: sendmail
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
-      OPENTELEMETRY_COLLECTOR_ENDPOINT: '${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}'
-      SENTRY: '${SENTRY:-0}'
-      SENTRY_DSN: '${SENTRY_DSN:-}'
-      PROMETHEUS_METRICS: '${PROMETHEUS_METRICS:-}'
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   usage:
-    image: '${DOCKER_REGISTRY}usage${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}usage${DOCKER_TAG}"
     networks:
-      - 'stack'
+      - "stack"
     depends_on:
       broker:
         condition: service_healthy
@@ -354,22 +354,22 @@ services:
     environment:
       NODE_ENV: production
       TOKENS_ENDPOINT: http://tokens:3003
-      KAFKA_CONNECTION_MODE: 'docker'
-      KAFKA_TOPIC: 'usage_reports_v2'
+      KAFKA_CONNECTION_MODE: "docker"
+      KAFKA_TOPIC: "usage_reports_v2"
       KAFKA_BROKER: broker:29092
       KAFKA_BUFFER_SIZE: 350
       KAFKA_BUFFER_INTERVAL: 1000
-      KAFKA_BUFFER_DYNAMIC: '1'
+      KAFKA_BUFFER_DYNAMIC: "1"
       PORT: 3006
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
-      SENTRY: '${SENTRY:-0}'
-      SENTRY_DSN: '${SENTRY_DSN:-}'
-      PROMETHEUS_METRICS: '${PROMETHEUS_METRICS:-}'
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   usage-ingestor:
-    image: '${DOCKER_REGISTRY}usage-ingestor${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}usage-ingestor${DOCKER_TAG}"
     networks:
-      - 'stack'
+      - "stack"
     depends_on:
       broker:
         condition: service_healthy
@@ -377,37 +377,37 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      KAFKA_CONNECTION_MODE: 'docker'
+      KAFKA_CONNECTION_MODE: "docker"
       KAFKA_BROKER: broker:29092
-      KAFKA_CONCURRENCY: '1'
-      KAFKA_CONSUMER_GROUP: 'usage-ingestor-v2'
-      KAFKA_TOPIC: 'usage_reports_v2'
-      CLICKHOUSE_PROTOCOL: 'http'
+      KAFKA_CONCURRENCY: "1"
+      KAFKA_CONSUMER_GROUP: "usage-ingestor-v2"
+      KAFKA_TOPIC: "usage_reports_v2"
+      CLICKHOUSE_PROTOCOL: "http"
       CLICKHOUSE_HOST: clickhouse
       CLICKHOUSE_PORT: 8123
-      CLICKHOUSE_USERNAME: '${CLICKHOUSE_USER}'
-      CLICKHOUSE_PASSWORD: '${CLICKHOUSE_PASSWORD}'
+      CLICKHOUSE_USERNAME: "${CLICKHOUSE_USER}"
+      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
       PORT: 3007
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
-      SENTRY: '${SENTRY:-0}'
-      SENTRY_DSN: '${SENTRY_DSN:-}'
-      PROMETHEUS_METRICS: '${PROMETHEUS_METRICS:-}'
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   app:
-    image: '${DOCKER_REGISTRY}app${DOCKER_TAG}'
+    image: "${DOCKER_REGISTRY}app${DOCKER_TAG}"
     ports:
-      - '8080:3000'
+      - "8080:3000"
     networks:
-      - 'stack'
+      - "stack"
     environment:
       PORT: 3000
       NODE_ENV: production
-      APP_BASE_URL: '${HIVE_APP_BASE_URL}'
+      APP_BASE_URL: "${HIVE_APP_BASE_URL}"
       GRAPHQL_PUBLIC_ENDPOINT: http://localhost:8082/graphql
       GRAPHQL_PUBLIC_SUBSCRIPTION_ENDPOINT: http://localhost:8082/graphql
       GRAPHQL_PUBLIC_ORIGIN: http://localhost:8082
-      AUTH_REQUIRE_EMAIL_VERIFICATION: '0'
-      AUTH_ORGANIZATION_OIDC: '1'
-      LOG_LEVEL: '${LOG_LEVEL:-debug}'
-      SENTRY: '${SENTRY:-0}'
-      SENTRY_DSN: '${SENTRY_DSN:-}'
+      AUTH_REQUIRE_EMAIL_VERIFICATION: "0"
+      AUTH_ORGANIZATION_OIDC: "1"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
