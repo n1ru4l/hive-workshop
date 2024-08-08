@@ -24,7 +24,7 @@ const products = [
   },
 ];
 
-type Product = typeof products[number];
+type Product = (typeof products)[number];
 type Context = {
   products: Product[];
 };
