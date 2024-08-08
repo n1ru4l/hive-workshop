@@ -3,4 +3,5 @@
 graphql-hive/.hive
 example-app/src/graphql/**
 !example-app/src/graphql/execute.ts
+!example-app/src/graphql/subscribe.ts
 schema.graphqls

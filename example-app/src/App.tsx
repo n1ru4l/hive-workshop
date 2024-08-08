@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import { graphql } from "./graphql";
 import { execute } from "./graphql/execute";
+import { subscribe } from "./graphql/subscribe";
 
 const BroadcastMutation = graphql(`
   mutation Broadcast($message: String!) {
@@ -11,8 +12,25 @@ const BroadcastMutation = graphql(`
   }
 `);
 
+const BroadcastsSubscription = graphql(`
+  subscription Broadcasts {
+    broadcasts
+  }
+`);
+
 function App() {
   const ref = useRef<HTMLTextAreaElement>(null);
+
+  const [messages, setMessages] = useState<string[]>([]);
+
+  useEffect(() => {
+    return subscribe({
+      document: BroadcastsSubscription,
+      onNext(message) {
+        setMessages((prev) => [...prev, message.broadcasts]);
+      },
+    });
+  }, []);
 
   return (
     <>
@@ -33,20 +51,23 @@ function App() {
         <button
           onClick={() => {
             if (!ref.current) return;
-            alert(ref.current.value);
-            ref.current.value = "";
 
-            execute(BroadcastMutation, {
-              message: "Hello, world!",
+            execute({
+              document: BroadcastMutation,
+              variables: { message: ref.current.value },
             });
+
+            ref.current.value = "";
           }}
         >
           Send Message
         </button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <ul className="read-the-docs">
+        {messages.map((message, index) => (
+          <li key={String(index)}>{message}</li>
+        ))}
+      </ul>
     </>
   );
 }
