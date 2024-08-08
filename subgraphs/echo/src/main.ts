@@ -7,12 +7,22 @@ const typeDefs = parse(/* GraphQL */ `
   type Query {
     echo(message: String!): String!
   }
+
+  type Mutation {
+    broadcast(message: String!): String
+  }
 `);
 
 const resolvers = {
   Query: {
     echo(_: unknown, args: { message: string }) {
       return args.message;
+    },
+  },
+  Mutation: {
+    broadcast(_: unknown, args: { message: string }) {
+      console.log(args.message);
+      // TODO: broadcast to all clients using subscriptions
     },
   },
 };

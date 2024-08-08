@@ -1,2 +1,3 @@
 packages:
   - subgraphs/*
+  - example-app

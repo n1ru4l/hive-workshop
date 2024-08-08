@@ -1,3 +1,6 @@
 **/node_modules
 **/dist
 graphql-hive/.hive
+example-app/src/graphql/**
+!example-app/src/graphql/execute.ts
+schema.graphqls
