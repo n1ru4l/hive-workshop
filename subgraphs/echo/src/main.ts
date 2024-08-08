@@ -1,6 +1,6 @@
 import { parse } from "graphql";
 import { buildSubgraphSchema } from "@apollo/subgraph";
-import { createYoga } from "graphql-yoga";
+import { createYoga, createPubSub } from "graphql-yoga";
 import { createServer } from "node:http";
 
 const typeDefs = parse(/* GraphQL */ `
@@ -11,7 +11,15 @@ const typeDefs = parse(/* GraphQL */ `
   type Mutation {
     broadcast(message: String!): String
   }
+
+  type Subscription {
+    broadcasts: String!
+  }
 `);
+
+const pubSub = createPubSub<{
+  broadcast: [string];
+}>();
 
 const resolvers = {
   Query: {
@@ -22,7 +30,14 @@ const resolvers = {
   Mutation: {
     broadcast(_: unknown, args: { message: string }) {
       console.log(args.message);
-      // TODO: broadcast to all clients using subscriptions
+      pubSub.publish("broadcast", args.message);
+      return args.message;
+    },
+  },
+  Subscription: {
+    broadcasts: {
+      subscribe: () => pubSub.subscribe("broadcast"),
+      resolve: (payload: string) => payload,
     },
   },
 };
