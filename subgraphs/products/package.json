@@ -2,7 +2,7 @@
   "name": "subgraph-products",
   "private": true,
   "dependencies": {
-    "graphql-yoga": "5.6.3",
+    "graphql-yoga": "5.7.0",
     "@apollo/subgraph": "2.8.4",
     "graphql": "16.9.0"
   },
