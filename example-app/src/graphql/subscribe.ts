@@ -15,7 +15,10 @@ export function subscribe<TResult, TVariables>(
   const url = new URL(endpoint);
   // TODO: enable persisted document usage
   if (args.document?.__meta__?.hash) {
-    url.searchParams.set("documentId", args.document.__meta__.hash);
+    url.searchParams.set(
+      "documentId",
+      window.__APP_VERSION__ + args.document.__meta__.hash
+    );
   } else {
     url.searchParams.set("query", args.document.toString());
   }

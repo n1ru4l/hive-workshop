@@ -18,8 +18,8 @@ importers:
         specifier: 0.43.0
         version: 0.43.0(@types/node@22.1.0)(encoding@0.1.13)
       '@graphql-mesh/serve-cli':
-        specifier: 0.11.2
-        version: 0.11.2(@graphql-mesh/store@0.102.2(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.2)(@graphql-mesh/utils@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@types/node@22.1.0)(@types/react@18.3.4)(@whatwg-node/fetch@0.9.21)(encoding@0.1.13)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1)(tslib@2.6.3)
+        specifier: 0.11.3
+        version: 0.11.3(@graphql-mesh/store@0.102.2(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.2)(@graphql-mesh/utils@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@types/node@22.1.0)(@types/react@18.3.4)(@whatwg-node/fetch@0.9.21)(encoding@0.1.13)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1)(tslib@2.6.3)
       prettier:
         specifier: 3.3.3
         version: 3.3.3
@@ -1012,8 +1012,8 @@ packages:
       graphql: '*'
       tslib: ^2.4.0
 
-  '@graphql-mesh/serve-cli@0.11.2':
-    resolution: {integrity: sha512-yE+dgw0C15SrjxGvG7paRUcXvU/R7PNIDP00SvW4H+n4MZqeqKfjCfDr14XnKx8UNorUgZFjR7a+LFAlnacuWA==}
+  '@graphql-mesh/serve-cli@0.11.3':
+    resolution: {integrity: sha512-eKtaFi2kLVhwlumE4eegl6B66ynFLmzkbFgb4qrqXVAR4MJb+Vt1pj86JGFpABe3UomhMw2o2ii7C3hGmOdE5w==}
     engines: {node: '>=16.0.0'}
     hasBin: true
     peerDependencies:
@@ -1023,8 +1023,8 @@ packages:
       '@parcel/watcher':
         optional: true
 
-  '@graphql-mesh/serve-runtime@0.8.2':
-    resolution: {integrity: sha512-sZEH0FBRQ/2ufHFbcRBHjBx3puc1glGfPTdIjpssGjopGYfOAasOpjeHe3siIhVktzb6GRYArVMijwsFpjtZCw==}
+  '@graphql-mesh/serve-runtime@0.8.3':
+    resolution: {integrity: sha512-Ex0Xf6cXRMblKdhZhd5ICd9cN3i6laMtUrsLlD9evujiXf6O5ybm8ptVHsy34EjL8h9nLDLH4QRqC/6pdPIZow==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: '*'
@@ -4870,12 +4870,12 @@ snapshots:
       graphql-jit: 0.8.6(graphql@16.9.0)
       tslib: 2.6.3
 
-  '@graphql-mesh/serve-cli@0.11.2(@graphql-mesh/store@0.102.2(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.2)(@graphql-mesh/utils@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@types/node@22.1.0)(@types/react@18.3.4)(@whatwg-node/fetch@0.9.21)(encoding@0.1.13)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1)(tslib@2.6.3)':
+  '@graphql-mesh/serve-cli@0.11.3(@graphql-mesh/store@0.102.2(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.2)(@graphql-mesh/utils@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@types/node@22.1.0)(@types/react@18.3.4)(@whatwg-node/fetch@0.9.21)(encoding@0.1.13)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1)(tslib@2.6.3)':
     dependencies:
       '@commander-js/extra-typings': 12.1.0(commander@12.1.0)
       '@graphql-mesh/cross-helpers': 0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)
       '@graphql-mesh/include': 0.1.0
-      '@graphql-mesh/serve-runtime': 0.8.2(@graphql-mesh/store@0.102.2(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.2)(@graphql-mesh/utils@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@graphql-mesh/types@0.102.2(@graphql-mesh/store@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@types/node@22.1.0)(@types/react@18.3.4)(@whatwg-node/fetch@0.9.21)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1)(tslib@2.6.3)
+      '@graphql-mesh/serve-runtime': 0.8.3(@graphql-mesh/store@0.102.2(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.2)(@graphql-mesh/utils@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@graphql-mesh/types@0.102.2(@graphql-mesh/store@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@types/node@22.1.0)(@types/react@18.3.4)(@whatwg-node/fetch@0.9.21)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1)(tslib@2.6.3)
       '@graphql-mesh/types': 0.102.2(@graphql-mesh/store@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3)
       '@graphql-mesh/utils': 0.102.2(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3)
       '@graphql-tools/utils': 10.5.4(graphql@16.9.0)
@@ -4902,7 +4902,7 @@ snapshots:
       - tslib
       - utf-8-validate
 
-  '@graphql-mesh/serve-runtime@0.8.2(@graphql-mesh/store@0.102.2(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.2)(@graphql-mesh/utils@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@graphql-mesh/types@0.102.2(@graphql-mesh/store@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@types/node@22.1.0)(@types/react@18.3.4)(@whatwg-node/fetch@0.9.21)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1)(tslib@2.6.3)':
+  '@graphql-mesh/serve-runtime@0.8.3(@graphql-mesh/store@0.102.2(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.2)(@graphql-mesh/utils@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@graphql-mesh/types@0.102.2(@graphql-mesh/store@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@types/node@22.1.0)(@types/react@18.3.4)(@whatwg-node/fetch@0.9.21)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1)(tslib@2.6.3)':
     dependencies:
       '@envelop/core': 5.0.2
       '@graphql-hive/core': 0.8.0(graphql@16.9.0)
@@ -7311,7 +7311,7 @@ snapshots:
 
   node-gyp@10.0.1:
     dependencies:
-      env-paths: 2.2.0
+      env-paths: 2.2.1
       exponential-backoff: 3.1.1
       glob: 10.4.5
       graceful-fs: 4.2.11

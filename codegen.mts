@@ -4,9 +4,9 @@ const config: CodegenConfig = {
   ignoreNoDocuments: true,
   // TODO: provide your own CDN key and target ID
   schema: {
-    "http://localhost:8082/artifacts/v1/<TODO: target-id>/sdl.graphql": {
+    "<TODO: add schema SDL CDN URL>": {
       headers: {
-        "X-Hive-CDN-Key": "<TODO: Provide Key>",
+        "X-Hive-CDN-Key": "<TODO: add cdn access key>",
       },
     },
   },

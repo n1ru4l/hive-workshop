@@ -16,7 +16,7 @@ export async function execute<TResult, TVariables>(
   // TODO: enable persisted document usage
   if (args.document?.__meta__?.hash) {
     queryOrDocumentId = {
-      documentId: args.document.__meta__.hash,
+      documentId: window.__APP_VERSION__ + args.document.__meta__.hash,
     };
   }
 
