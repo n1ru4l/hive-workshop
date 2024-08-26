@@ -5,3 +5,6 @@ example-app/src/graphql/**
 !example-app/src/graphql/execute.ts
 !example-app/src/graphql/subscribe.ts
 schema.graphqls
+codegen.mts
+hive.json
+mesh.config.ts
