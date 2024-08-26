@@ -242,6 +242,8 @@ services:
       SENTRY: "${SENTRY:-0}"
       SENTRY_DSN: "${SENTRY_DSN:-}"
       PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
+      # Feature Flags
+      FEATURE_FLAGS_APP_DEPLOYMENTS_ENABLED: "1"
 
   policy:
     image: "${DOCKER_REGISTRY}policy${DOCKER_TAG}"
