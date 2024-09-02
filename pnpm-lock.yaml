@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@graphql-hive/yoga': 0.38.0
+
 importers:
 
   .:
@@ -1013,8 +1016,8 @@ packages:
       '@parcel/watcher':
         optional: true
 
-  '@graphql-hive/yoga@0.37.0':
-    resolution: {integrity: sha512-OeMUZblpvJlR0/78/oX6cXPpSl/owGD9Sk8G/iAggGhOqlbrFIJmRhG0YkLGFPjAVEFqd/QKeVeoSTHBcX+xSw==}
+  '@graphql-hive/yoga@0.38.0':
+    resolution: {integrity: sha512-mg7IxzG95LG0VCw5P0nsAHQeeaebZhjg8MMiH98wkn41rZkw1lmeGG76ZmaUDYz5EZw+0bwP5KXPwT2zZWwLLg==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
@@ -6048,7 +6051,7 @@ snapshots:
       - tslib
       - utf-8-validate
 
-  '@graphql-hive/yoga@0.37.0(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql-yoga@5.7.0(graphql@16.9.0))(graphql@16.9.0)':
+  '@graphql-hive/yoga@0.38.0(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql-yoga@5.7.0(graphql@16.9.0))(graphql@16.9.0)':
     dependencies:
       '@graphql-hive/core': 0.8.0(graphql@16.9.0)
       '@graphql-yoga/plugin-persisted-operations': 3.7.0(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql-yoga@5.7.0(graphql@16.9.0))(graphql@16.9.0)
@@ -6163,7 +6166,7 @@ snapshots:
   '@graphql-mesh/plugin-hive@0.102.5(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.5(@graphql-mesh/store@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@graphql-mesh/utils@0.102.5(@graphql-mesh/cross-helpers@0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0))(@graphql-mesh/types@0.102.5)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3))(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql-yoga@5.7.0(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3)':
     dependencies:
       '@graphql-hive/core': 0.8.0(graphql@16.9.0)
-      '@graphql-hive/yoga': 0.37.0(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql-yoga@5.7.0(graphql@16.9.0))(graphql@16.9.0)
+      '@graphql-hive/yoga': 0.38.0(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql-yoga@5.7.0(graphql@16.9.0))(graphql@16.9.0)
       '@graphql-mesh/cross-helpers': 0.4.6(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)
       '@graphql-mesh/string-interpolation': 0.5.6(graphql@16.9.0)(tslib@2.6.3)
       '@graphql-mesh/types': 0.102.5(@graphql-mesh/store@0.102.2)(@graphql-tools/utils@10.5.4(graphql@16.9.0))(graphql@16.9.0)(tslib@2.6.3)

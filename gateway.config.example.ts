@@ -8,7 +8,7 @@ export const gatewayConfig = defineConfig({
   // },
   // reporting: {
   //   type: "hive",
-  //   token: "cdb3a23f9844af49927128063907234c",
+  //   token: "<TODO: Add reporting access key>",
   //   enabled: true,
   //   selfHosting: {
   //     applicationUrl: "http://localhost:8080",
