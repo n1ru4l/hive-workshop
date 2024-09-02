@@ -1,6 +1,6 @@
-import { defineConfig } from "@graphql-mesh/serve-cli";
+import { defineConfig } from "@graphql-hive/gateway";
 
-export const serveConfig = defineConfig({
+export const gatewayConfig = defineConfig({
   // supergraph: {
   //   type: "hive",
   //   endpoint: "<TODO: Add supergraph CDN endpoint>",

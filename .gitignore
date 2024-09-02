@@ -7,4 +7,4 @@ example-app/src/graphql/**
 schema.graphqls
 codegen.mts
 hive.json
-mesh.config.ts
+gateway.config.ts
