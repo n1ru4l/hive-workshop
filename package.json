@@ -1,13 +1,22 @@
 {
   "name": "hive-workshop",
+  "description": "A workshop for learning how to evolve a GraphQL API with Apollo Federation and GraphQL Hive.",
   "private": true,
   "devDependencies": {
-    "prettier": "2.x.x",
-    "@graphql-hive/cli": "0.29.0",
-    "@graphql-inspector/cli": "4.0.2"
+    "prettier": "3.3.3",
+    "@graphql-hive/cli": "0.43.0",
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/schema-ast": "4.1.0",
+    "@graphql-hive/gateway": "0.1.1"
   },
+  "packages": {},
   "scripts": {
     "start:subgraphs": "pnpm run --parallel --filter \"subgraph-*\" start",
-    "start:hive": "docker compose up"
+    "prettier": "prettier --write '**/*.{js,ts,tsx,md,json}'",
+    "graphql-codegen": "graphql-codegen --config codegen.mts"
+  },
+  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903",
+  "resolutions": {
+    "@graphql-hive/yoga": "0.38.0"
   }
 }

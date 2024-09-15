@@ -35,8 +35,8 @@ const reviews = [
   },
 ];
 
-type Review = typeof reviews[number];
-type User = typeof usernames[number];
+type Review = (typeof reviews)[number];
+type User = (typeof usernames)[number];
 type Context = {
   reviews: Review[];
   usernames: User[];
@@ -92,7 +92,7 @@ const resolvers = {
   Product: {
     reviews(product: { upc: string }, context: Context) {
       return context.reviews.filter(
-        (review) => review.product.upc === product.upc
+        (review) => review.product.upc === product.upc,
       );
     },
   },

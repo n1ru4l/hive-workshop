@@ -19,7 +19,7 @@ const inventory = [
   { upc: "3", inStock: true },
 ];
 
-type Inventory = typeof inventory[number];
+type Inventory = (typeof inventory)[number];
 type Product = {
   price: number;
   weight: number;

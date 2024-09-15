@@ -7,7 +7,7 @@ networks:
 
 services:
   db:
-    image: postgres:14.11-alpine
+    image: postgres:14.12-alpine
     environment:
       POSTGRES_DB: "${POSTGRES_DB}"
       POSTGRES_USER: "${POSTGRES_USER}"
@@ -24,9 +24,9 @@ services:
       - ./.hive/postgres:/var/lib/postgresql/data
 
   clickhouse:
-    image: clickhouse/clickhouse-server:23.10-alpine
+    image: clickhouse/clickhouse-server:24.6-alpine
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "localhost:8123/ping"]
+      test: ["CMD", "wget", "--spider", "-q", "http://0.0.0.0:8123/ping"]
       interval: 5s
       timeout: 5s
       retries: 6
@@ -39,65 +39,44 @@ services:
     volumes:
       - ./.hive/clickhouse/db:/var/lib/clickhouse
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.6.0
-    hostname: zookeeper
-    networks:
-      - "stack"
-    ulimits:
-      nofile:
-        soft: 20000
-        hard: 40000
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    volumes:
-      - ./.hive/zookeeper/db:/var/lib/zookeeper/data
-
   broker:
-    image: confluentinc/cp-kafka:7.6.0
+    image: redpandadata/redpanda:v23.3.18
+    container_name: broker
     hostname: broker
-    depends_on:
-      zookeeper:
-        condition: service_started
     networks:
       - "stack"
-    ulimits:
-      nofile:
-        soft: 20000
-        hard: 40000
+    ports:
+      - "0.0.0.0:9092:9092"
+      - "0.0.0.0:9644:9644"
+    command:
+      - redpanda
+      - start
+      - --smp
+      - "1"
+      - --set redpanda.empty_seed_starts_cluster=false
+      - --seeds "redpanda-1:33145"
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://broker:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr
+      - PLAINTEXT://0.0.0.0:27082,OUTSIDE://0.0.0.0:7082
+      - --advertise-pandaproxy-addr
+      - PLAINTEXT://broker:27082,OUTSIDE://localhost:7082
+      - --advertise-rpc-addr redpanda-1:33145
+    mem_limit: 300m
+    mem_reservation: 100m
     healthcheck:
-      test:
-        [
-          "CMD",
-          "cub",
-          "kafka-ready",
-          "1",
-          "5",
-          "-b",
-          "127.0.0.1:9092",
-          "-c",
-          "/etc/kafka/kafka.properties",
-        ]
-      interval: 15s
-      timeout: 10s
+      test: "curl -f http://localhost:9644/public_metrics"
+      interval: 3s
+      timeout: 3s
       retries: 6
-      start_period: 15s
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      start_period: 5s
     volumes:
-      - ./.hive/broker/db:/var/lib/kafka/data
+      - ./.hive/broker/db:/var/lib/redpanda/data
 
   redis:
-    image: bitnami/redis:7.2.4
+    image: bitnami/redis:7.2.5
     networks:
       - "stack"
     healthcheck:
@@ -160,7 +139,7 @@ services:
       myminio/artifacts; exit 0"
 
   s3_reverse_proxy:
-    image: caddy:2.7.6-alpine
+    image: caddy:2.8.4-alpine
     depends_on:
       s3:
         condition: service_healthy
@@ -193,7 +172,7 @@ services:
       CLICKHOUSE_USERNAME: "${CLICKHOUSE_USER}"
       CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
       TS_NODE_TRANSPILE_ONLY: "true"
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
 
   server:
     image: "${DOCKER_REGISTRY}server${DOCKER_TAG}"
@@ -243,8 +222,6 @@ services:
       ENCRYPTION_SECRET: "${HIVE_ENCRYPTION_SECRET}"
       WEB_APP_URL: "${HIVE_APP_BASE_URL}"
       PORT: 3001
-      SUPERTOKENS_CONNECTION_URI: http://supertokens:3567
-      SUPERTOKENS_API_KEY: "${SUPERTOKENS_API_KEY}"
       S3_ENDPOINT: "http://s3:9000"
       S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
       S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
@@ -253,8 +230,20 @@ services:
       CDN_AUTH_PRIVATE_KEY: ${CDN_AUTH_PRIVATE_KEY}
       CDN_API: "1"
       CDN_API_BASE_URL: "http://localhost:8082"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      # Auth
       AUTH_ORGANIZATION_OIDC: "1"
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      AUTH_REQUIRE_EMAIL_VERIFICATION: "0"
+      SUPERTOKENS_CONNECTION_URI: http://supertokens:3567
+      SUPERTOKENS_API_KEY: "${SUPERTOKENS_API_KEY}"
+      GRAPHQL_PUBLIC_ORIGIN: http://localhost:8082
+      # Tracing
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
+      # Feature Flags
+      FEATURE_FLAGS_APP_DEPLOYMENTS_ENABLED: "1"
 
   policy:
     image: "${DOCKER_REGISTRY}policy${DOCKER_TAG}"
@@ -263,7 +252,11 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3012
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   schema:
     image: "${DOCKER_REGISTRY}schema${DOCKER_TAG}"
@@ -279,7 +272,11 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: "${REDIS_PASSWORD}"
       ENCRYPTION_SECRET: "${HIVE_ENCRYPTION_SECRET}"
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
 
   tokens:
     image: "${DOCKER_REGISTRY}tokens${DOCKER_TAG}"
@@ -299,7 +296,11 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: "${REDIS_PASSWORD}"
       PORT: 3003
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   webhooks:
     image: "${DOCKER_REGISTRY}webhooks${DOCKER_TAG}"
@@ -314,7 +315,11 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: "${REDIS_PASSWORD}"
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   emails:
     image: "${DOCKER_REGISTRY}emails${DOCKER_TAG}"
@@ -331,7 +336,11 @@ services:
       REDIS_PASSWORD: "${REDIS_PASSWORD}"
       EMAIL_FROM: no-reply@graphql-hive.com
       EMAIL_PROVIDER: sendmail
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      OPENTELEMETRY_COLLECTOR_ENDPOINT: "${OPENTELEMETRY_COLLECTOR_ENDPOINT:-}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   usage:
     image: "${DOCKER_REGISTRY}usage${DOCKER_TAG}"
@@ -354,7 +363,10 @@ services:
       KAFKA_BUFFER_INTERVAL: 1000
       KAFKA_BUFFER_DYNAMIC: "1"
       PORT: 3006
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   usage-ingestor:
     image: "${DOCKER_REGISTRY}usage-ingestor${DOCKER_TAG}"
@@ -378,7 +390,10 @@ services:
       CLICKHOUSE_USERNAME: "${CLICKHOUSE_USER}"
       CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
       PORT: 3007
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"
+      PROMETHEUS_METRICS: "${PROMETHEUS_METRICS:-}"
 
   app:
     image: "${DOCKER_REGISTRY}app${DOCKER_TAG}"
@@ -390,11 +405,11 @@ services:
       PORT: 3000
       NODE_ENV: production
       APP_BASE_URL: "${HIVE_APP_BASE_URL}"
-      SUPERTOKENS_CONNECTION_URI: http://supertokens:3567
-      SUPERTOKENS_API_KEY: "${SUPERTOKENS_API_KEY}"
-      EMAILS_ENDPOINT: http://emails:3011
-      GRAPHQL_ENDPOINT: http://server:3001/graphql
-      SERVER_ENDPOINT: http://server:3001
+      GRAPHQL_PUBLIC_ENDPOINT: http://localhost:8082/graphql
+      GRAPHQL_PUBLIC_SUBSCRIPTION_ENDPOINT: http://localhost:8082/graphql
+      GRAPHQL_PUBLIC_ORIGIN: http://localhost:8082
       AUTH_REQUIRE_EMAIL_VERIFICATION: "0"
       AUTH_ORGANIZATION_OIDC: "1"
-      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_LEVEL: "${LOG_LEVEL:-debug}"
+      SENTRY: "${SENTRY:-0}"
+      SENTRY_DSN: "${SENTRY_DSN:-}"

@@ -32,7 +32,7 @@ const users = [
   },
 ];
 
-type User = typeof users[number];
+type User = (typeof users)[number];
 
 type Context = {
   users: User[];

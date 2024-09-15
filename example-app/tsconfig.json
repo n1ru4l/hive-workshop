@@ -1,0 +1,18 @@
+{
+  "files": [],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
+        "schema": "../schema.graphqls",
+        "disableTypegen": true,
+        "templateIsCallExpression": true,
+        "template": "graphql"
+      }
+    ]
+  },
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
